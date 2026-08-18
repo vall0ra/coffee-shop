@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  <title>{% block title %}coffee shop{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Work+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="mark">☕ coffee shop</div>
+      {% if current_user.is_authenticated %}
+        <span class="role-tag">{{ 'Manager' if current_user.role == 'manager' else 'Staff' }} · {{ current_user.name }}</span>
+      {% endif %}
+    </div>
+    <nav>
+      {% block nav_items %}{% endblock %}
+    </nav>
+    <div class="sidebar-footer">
+      <a href="{{ url_for('auth.logout') }}">↩ Log Out</a>
+    </div>
+  </aside>
+
+  <div style="flex:1; min-width:0; display:flex; flex-direction:column;">
+    <div class="mobile-topbar">
+      <span class="mark">☕ coffee shop</span>
+      <select onchange="if(this.value) window.location.href=this.value;">
+        <option value="">Menu</option>
+        {% block mobile_nav_items %}{% endblock %}
+        <option value="{{ url_for('auth.logout') }}">Log Out</option>
+      </select>
+    </div>
+
+    <main class="main-content">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="flash flash-{{ category }}">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</div>
+{% block extra_scripts %}{% endblock %}
+</body>
+</html>

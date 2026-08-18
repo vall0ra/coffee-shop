@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}Sales Reports — coffee shop{% endblock %}
+{% set active_nav = 'reports' %}
+{% block nav_items %}{% include 'manager/_nav.html' %}{% endblock %}
+{% block mobile_nav_items %}{% include 'manager/_mobile_nav.html' %}{% endblock %}
+
+{% block content %}
+<div class="topbar">
+  <div>
+    <div class="eyebrow">Reports</div>
+    <h1>Sales Reports</h1>
+  </div>
+</div>
+
+<div class="card">
+  <h2 class="mt-0" style="font-size:1.05rem;">Search for an individual order</h2>
+  <form method="GET" action="{{ url_for('manager.reports') }}" class="filter-bar">
+    <div class="field" style="flex:1;">
+      <input type="search" name="q" placeholder="Order number, e.g. #10004" value="{{ order_query }}">
+    </div>
+    <button type="submit" class="btn btn-primary">Search</button>
+  </form>
+  {% if order_query %}
+    {% if found_order %}
+      <div class="receipt-line" style="margin-top:10px;">
+        <span>{{ found_order.order_number }} — {{ found_order.location.name }}, Table {{ found_order.table_number }}</span>
+        <a href="{{ url_for('manager.order_detail', order_id=found_order.id) }}" class="btn btn-sm btn-outline">View Order</a>
+      </div>
+    {% else %}
+      <p class="text-muted" style="margin-top:10px;">No order found matching "{{ order_query }}".</p>
+    {% endif %}
+  {% endif %}
+</div>
+
+<div class="card">
+  <h2 class="mt-0" style="font-size:1.05rem;">Generate Report</h2>
+  <form method="GET" action="{{ url_for('manager.reports') }}" class="filter-bar">
+    <div class="field">
+      <label for="start">Start Date</label>
+      <input type="date" name="start" id="start" value="{{ start_str }}">
+    </div>
+    <div class="field">
+      <label for="end">End Date</label>
+      <input type="date" name="end" id="end" value="{{ end_str }}">
+    </div>
+    <button type="submit" class="btn btn-primary">Generate Report</button>
+  </form>
+</div>
+
+{% if summary %}
+<div class="section-title"><h2>{{ label }}</h2></div>
+<div class="stat-grid">
+  <div class="stat-card"><div class="label">Total Revenue</div><div class="value">£{{ '%.2f'|format(summary.total_sales) }}</div></div>
+  <div class="stat-card"><div class="label">Total Orders</div><div class="value">{{ summary.order_count }}</div></div>
+  <div class="stat-card"><div class="label">Average Order Value</div><div class="value">£{{ '%.2f'|format(summary.avg_order) }}</div></div>
+</div>
+
+<div class="section-title"><h2>Products Sold</h2></div>
+<div class="card">
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Product</th><th class="num">Qty</th><th class="num">Revenue</th></tr></thead>
+      <tbody>
+        {% for name, data in products %}
+        <tr><td>{{ name }}</td><td class="num">{{ data.qty }}</td><td class="num">£{{ '%.2f'|format(data.revenue) }}</td></tr>
+        {% else %}<tr><td colspan="3" class="text-muted text-center">No data.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="section-title"><h2>Payment Method Totals</h2></div>
+<div class="card">
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Method</th><th class="num">Total</th></tr></thead>
+      <tbody>
+        {% for method, total in summary.payment_totals.items() %}
+        <tr><td>{{ method }}</td><td class="num">£{{ '%.2f'|format(total) }}</td></tr>
+        {% else %}<tr><td colspan="2" class="text-muted text-center">No data.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="section-title"><h2>Sales by Location</h2></div>
+<div class="card">
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Location</th><th class="num">Orders</th><th class="num">Total</th></tr></thead>
+      <tbody>
+        {% for name, data in locations %}
+        <tr><td>{{ name }}</td><td class="num">{{ data.orders }}</td><td class="num">£{{ '%.2f'|format(data.total) }}</td></tr>
+        {% else %}<tr><td colspan="3" class="text-muted text-center">No data.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="btn-group" style="margin-top:18px;">
+    <a class="btn btn-outline" href="{{ url_for('manager.export_csv', start=start_str, end=end_str) }}">⬇ Export CSV</a>
+    <a class="btn btn-outline" href="{{ url_for('manager.export_xlsx', start=start_str, end=end_str) }}">⬇ Export Excel</a>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

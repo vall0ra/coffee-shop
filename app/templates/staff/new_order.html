@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}New Order — coffee shop{% endblock %}
+
+{% block nav_items %}
+  <a href="{{ url_for('staff.new_order') }}" class="active">+ New Order</a>
+  <a href="{{ url_for('staff.dashboard') }}">My Orders</a>
+  {% if current_user.role == 'manager' %}<a href="{{ url_for('manager.dashboard') }}">Manager Dashboard</a>{% endif %}
+{% endblock %}
+{% block mobile_nav_items %}
+  <option value="{{ url_for('staff.new_order') }}">+ New Order</option>
+  <option value="{{ url_for('staff.dashboard') }}">My Orders</option>
+{% endblock %}
+
+{% block content %}
+<div class="topbar">
+  <div>
+    <div class="eyebrow">New Order</div>
+    <h1>Take an Order</h1>
+  </div>
+  <a href="{{ url_for('staff.dashboard') }}" class="btn btn-outline">Cancel</a>
+</div>
+
+<div class="wizard-progress" id="wizard-progress"></div>
+
+<div class="wizard-layout">
+  <div id="step-container" class="card"></div>
+
+  <div class="basket" id="basket-container"></div>
+</div>
+
+<script>
+  window.ORDERS_LIST_URL = "{{ url_for('staff.dashboard') }}";
+  window.MENU_API_URL = "{{ url_for('staff.api_menu') }}";
+  window.MEMBERS_SEARCH_URL = "{{ url_for('staff.api_members_search') }}";
+  window.CREATE_ORDER_URL = "{{ url_for('staff.api_create_order') }}";
+</script>
+<script src="{{ url_for('static', filename='js/order.js') }}"></script>
+{% endblock %}

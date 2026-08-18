@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Locations — coffee shop{% endblock %}
+{% set active_nav = 'locations' %}
+{% block nav_items %}{% include 'manager/_nav.html' %}{% endblock %}
+{% block mobile_nav_items %}{% include 'manager/_mobile_nav.html' %}{% endblock %}
+
+{% block content %}
+<div class="topbar">
+  <div>
+    <div class="eyebrow">Location Management</div>
+    <h1>Locations</h1>
+  </div>
+</div>
+
+<div class="card">
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Location</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for location in locations %}
+        <tr>
+          <td>{{ location.name }}</td>
+          <td><span class="badge {{ 'badge-confirmed' if location.active else 'badge-cancelled' }}">{{ 'Active' if location.active else 'Disabled' }}</span></td>
+          <td><button class="btn btn-sm btn-outline" onclick="toggleLocation({{ location.id }})">{{ 'Disable' if location.active else 'Enable' }}</button></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="3" class="text-muted text-center">No locations yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <p class="text-muted" style="font-size:0.82rem; margin-top:12px;">Disabled locations won't appear when staff create a new order. Historical orders keep their original location.</p>
+</div>
+
+<div class="card">
+  <h2 class="mt-0" style="font-size:1.05rem;">Add Location</h2>
+  <form method="POST" action="{{ url_for('manager.location_add') }}" class="field-row">
+    <div class="field" style="flex:1;"><label>Location Name</label><input type="text" name="name" required></div>
+    <div class="field" style="align-self:end;"><button type="submit" class="btn btn-accent">Add Location</button></div>
+  </form>
+</div>
+
+<script>
+function toggleLocation(id) {
+  fetch(`/manager/locations/${id}/toggle`, {method: "POST"}).then(() => window.location.reload());
+}
+</script>
+{% endblock %}

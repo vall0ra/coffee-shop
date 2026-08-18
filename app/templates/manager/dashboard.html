@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Sales Dashboard — coffee shop{% endblock %}
+{% set active_nav = 'dashboard' %}
+{% block nav_items %}{% include 'manager/_nav.html' %}{% endblock %}
+{% block mobile_nav_items %}{% include 'manager/_mobile_nav.html' %}{% endblock %}
+
+{% block content %}
+<div class="topbar">
+  <div>
+    <div class="eyebrow">Sales Dashboard</div>
+    <h1>Today's Overview</h1>
+  </div>
+</div>
+
+<div class="stat-grid">
+  <div class="stat-card">
+    <div class="label">Today's Total Sales</div>
+    <div class="value">£{{ '%.2f'|format(summary.total_sales) }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">Today's Orders</div>
+    <div class="value">{{ summary.order_count }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">Average Order Value</div>
+    <div class="value">£{{ '%.2f'|format(summary.avg_order) }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">Bank Card Payments</div>
+    <div class="value">£{{ '%.2f'|format(card_total) }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">Member Card Payments</div>
+    <div class="value">£{{ '%.2f'|format(member_total) }}</div>
+  </div>
+</div>
+
+<div class="section-title"><h2>Sales by Location</h2></div>
+<div class="card">
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Location</th><th class="num">Orders</th><th class="num">Total</th></tr></thead>
+      <tbody>
+        {% for name, data in locations %}
+        <tr><td>{{ name }}</td><td class="num">{{ data.orders }}</td><td class="num">£{{ '%.2f'|format(data.total) }}</td></tr>
+        {% else %}
+        <tr><td colspan="3" class="text-muted text-center">No sales yet today.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="section-title"><h2>Products Sold Today</h2></div>
+<div class="card">
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Item</th><th class="num">Sold</th></tr></thead>
+      <tbody>
+        {% for name, data in products %}
+        <tr><td>{{ name }}</td><td class="num">{{ data.qty }}</td></tr>
+        {% else %}
+        <tr><td colspan="2" class="text-muted text-center">No items sold yet today.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

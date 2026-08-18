@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>coffee shop — Log In</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Work+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="login-page">
+  <div class="login-card">
+    <div class="login-brand">
+      <span class="cup">☕</span>
+      <h1>coffee shop</h1>
+      <p>Order &amp; Sales Management</p>
+    </div>
+
+    <div class="role-toggle">
+      <a href="{{ url_for('auth.login', role='staff') }}" class="{{ 'active' if role == 'staff' else '' }}">Staff</a>
+      <a href="{{ url_for('auth.login', role='manager') }}" class="{{ 'active' if role == 'manager' else '' }}">Manager</a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('auth.login') }}">
+      <input type="hidden" name="role" value="{{ role }}">
+      <div class="field">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" value="{{ username }}" autocomplete="username" required autofocus>
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Log In as {{ 'Manager' if role == 'manager' else 'Staff' }}</button>
+    </form>
+
+    <div class="demo-hint">
+      {% if role == 'manager' %}
+        Demo manager login — Username: Manager#1 · Password: password123
+      {% else %}
+        Demo staff login — Username: staff1 · Password: staffpass123
+      {% endif %}
+    </div>
+  </div>
+</div>
+</body>
+</html>

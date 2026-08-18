@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Sales History — coffee shop{% endblock %}
+{% set active_nav = 'sales_history' %}
+{% block nav_items %}{% include 'manager/_nav.html' %}{% endblock %}
+{% block mobile_nav_items %}{% include 'manager/_mobile_nav.html' %}{% endblock %}
+
+{% block content %}
+<div class="topbar">
+  <div>
+    <div class="eyebrow">Sales History</div>
+    <h1>{{ label }}</h1>
+  </div>
+</div>
+
+<div class="tab-row">
+  {% for key, text in [('today','Today'), ('yesterday','Yesterday'), ('this_week','This Week'), ('last_week','Last Week'), ('this_month','This Month'), ('last_month','Last Month')] %}
+  <a href="{{ url_for('manager.sales_history', period=key) }}" class="{{ 'active' if period == key else '' }}">{{ text }}</a>
+  {% endfor %}
+  <a href="#custom-range" class="{{ 'active' if period == 'custom' else '' }}">Custom Range</a>
+</div>
+
+<div class="card" id="custom-range">
+  <form method="GET" action="{{ url_for('manager.sales_history') }}" class="filter-bar">
+    <input type="hidden" name="period" value="custom">
+    <div class="field">
+      <label for="start">From</label>
+      <input type="date" name="start" id="start" value="{{ start_str }}">
+    </div>
+    <div class="field">
+      <label for="end">To</label>
+      <input type="date" name="end" id="end" value="{{ end_str }}">
+    </div>
+    <button type="submit" class="btn btn-primary">Apply Range</button>
+  </form>
+</div>
+
+<div class="section-title" style="margin-top:24px;"><h2>Sales Summary</h2></div>
+<div class="stat-grid">
+  <div class="stat-card"><div class="label">Total Sales</div><div class="value">£{{ '%.2f'|format(summary.total_sales) }}</div></div>
+  <div class="stat-card"><div class="label">Orders</div><div class="value">{{ summary.order_count }}</div></div>
+  <div class="stat-card"><div class="label">Average Order Value</div><div class="value">£{{ '%.2f'|format(summary.avg_order) }}</div></div>
+  <div class="stat-card"><div class="label">Items Sold</div><div class="value">{{ summary.items_sold }}</div></div>
+</div>
+
+<div class="section-title"><h2>Items</h2></div>
+<div class="card">
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Item</th><th class="num">Qty</th><th class="num">Revenue</th></tr></thead>
+      <tbody>
+        {% for name, data in products %}
+        <tr><td>{{ name }}</td><td class="num">{{ data.qty }}</td><td class="num">£{{ '%.2f'|format(data.revenue) }}</td></tr>
+        {% else %}
+        <tr><td colspan="3" class="text-muted text-center">No items in this period.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="section-title"><h2>Payment Method</h2></div>
+<div class="card">
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Method</th><th class="num">Total</th></tr></thead>
+      <tbody>
+        {% for method, total in summary.payment_totals.items() %}
+        <tr><td>{{ method }}</td><td class="num">£{{ '%.2f'|format(total) }}</td></tr>
+        {% else %}
+        <tr><td colspan="2" class="text-muted text-center">No payments in this period.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="section-title"><h2>Locations</h2></div>
+<div class="card">
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Location</th><th class="num">Orders</th><th class="num">Total</th></tr></thead>
+      <tbody>
+        {% for name, data in locations %}
+        <tr><td>{{ name }}</td><td class="num">{{ data.orders }}</td><td class="num">£{{ '%.2f'|format(data.total) }}</td></tr>
+        {% else %}
+        <tr><td colspan="3" class="text-muted text-center">No sales in this period.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

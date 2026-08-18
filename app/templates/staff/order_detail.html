@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Order {{ order.order_number }} — coffee shop{% endblock %}
+
+{% block nav_items %}
+  <a href="{{ url_for('staff.new_order') }}">+ New Order</a>
+  <a href="{{ url_for('staff.dashboard') }}" class="active">My Orders</a>
+  {% if current_user.role == 'manager' %}<a href="{{ url_for('manager.dashboard') }}">Manager Dashboard</a>{% endif %}
+{% endblock %}
+{% block mobile_nav_items %}
+  <option value="{{ url_for('staff.new_order') }}">+ New Order</option>
+  <option value="{{ url_for('staff.dashboard') }}">My Orders</option>
+{% endblock %}
+
+{% block content %}
+<div class="topbar">
+  <div>
+    <div class="eyebrow">Order Detail</div>
+    <h1 class="mono">{{ order.order_number }}</h1>
+  </div>
+  <a href="{{ url_for('staff.dashboard') }}" class="btn btn-outline">← Back to Orders</a>
+</div>
+
+<div class="wizard-layout">
+  <div>
+    <div class="card">
+      <div class="section-title" style="margin-top:0;"><h2>Items</h2></div>
+      {% for item in order.items %}
+      <div class="receipt-line">
+        <span>
+          {{ item.item_name }} × {{ item.quantity }}
+          {% if item.options_list() %}
+            <br><span class="text-muted" style="font-size:0.8rem;">{{ item.options_list()|map(attribute='name')|join(', ') }}</span>
+          {% endif %}
+        </span>
+        <span class="mono">£{{ '%.2f'|format(item.total_price) }}</span>
+      </div>
+      {% endfor %}
+      <div class="receipt-line" style="border-top:2px solid var(--border); font-weight:700; margin-top:8px; padding-top:12px;">
+        <span>Total</span>
+        <span class="mono">£{{ '%.2f'|format(order.total) }}</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title" style="margin-top:0;"><h2>Order Info</h2></div>
+      <div class="receipt-line"><span class="k">Location</span><span>{{ order.location.name }}</span></div>
+      <div class="receipt-line"><span class="k">Table</span><span>{{ order.table_number }}</span></div>
+      <div class="receipt-line"><span class="k">Staff</span><span>{{ order.staff.name }}</span></div>
+      <div class="receipt-line"><span class="k">Member</span><span>{{ order.member.member_number ~ ' — ' ~ order.member.name if order.member else '—' }}</span></div>
+      <div class="receipt-line">
+        <span class="k">Allergies</span>
+        <span>
+          {% if order.allergy_status and order.allergen_list() %}
+            {% for a in order.allergen_list() %}<span class="badge badge-warning">⚠ {{ a }}</span>{% endfor %}
+          {% else %}—{% endif %}
+        </span>
+      </div>
+      <div class="receipt-line"><span class="k">Payment Method</span><span>{{ order.payment_method }}</span></div>
+      <div class="receipt-line"><span class="k">Payment Status</span><span>{{ order.payment_status }}</span></div>
+      {% if order.payment_method == 'Cash' %}
+      <div class="receipt-line"><span class="k">Amount Received</span><span class="mono">£{{ '%.2f'|format(order.amount_received) }}</span></div>
+      <div class="receipt-line"><span class="k">Change Given</span><span class="mono">£{{ '%.2f'|format(order.change_due) }}</span></div>
+      {% endif %}
+      <div class="receipt-line"><span class="k">Placed</span><span>{{ order.created_at.strftime('%d %b %Y, %H:%M') }}</span></div>
+    </div>
+  </div>
+
+  <div class="basket">
+    <h3>Order Status</h3>
+    <p class="meta-line" style="margin-bottom:16px;">Current status: <strong style="color:#fff;">{{ order.order_status }}</strong></p>
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      {% for status in ['Pending', 'Preparing', 'Confirmed', 'Delivered', 'Cancelled'] %}
+      <button class="btn {{ 'btn-danger' if status == 'Cancelled' else 'btn-accent' }} btn-block"
+              onclick="setStatus('{{ status }}')" {{ 'disabled' if order.order_status == status else '' }}>
+        Mark as {{ status }}
+      </button>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<script>
+function setStatus(status) {
+  fetch("{{ url_for('staff.update_status', order_id=order.id) }}", {
+    method: "POST",
+    headers: {"Content-Type": "application/x-www-form-urlencoded"},
+    body: "status=" + encodeURIComponent(status)
+  }).then(r => r.json()).then(data => {
+    if (data.ok) window.location.reload();
+  });
+}
+</script>
+{% endblock %}

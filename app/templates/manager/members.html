@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Members — coffee shop{% endblock %}
+{% set active_nav = 'members' %}
+{% block nav_items %}{% include 'manager/_nav.html' %}{% endblock %}
+{% block mobile_nav_items %}{% include 'manager/_mobile_nav.html' %}{% endblock %}
+
+{% block content %}
+<div class="topbar">
+  <div>
+    <div class="eyebrow">Member Management</div>
+    <h1>Members</h1>
+  </div>
+  <button class="btn btn-accent" onclick="document.getElementById('create-member-card').scrollIntoView({behavior:'smooth'})">+ Create Member</button>
+</div>
+
+<div class="card">
+  <form method="GET" action="{{ url_for('manager.members') }}" class="filter-bar">
+    <div class="field" style="flex:1;">
+      <input type="search" name="q" placeholder="Search Member Number or Name" value="{{ q }}">
+    </div>
+    <button type="submit" class="btn btn-primary">Search</button>
+  </form>
+</div>
+
+<div class="card">
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Member #</th><th>Name</th><th>Joined</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for member in members %}
+        <tr>
+          <td class="mono">{{ member.member_number }}</td>
+          <td>{{ member.name }}</td>
+          <td>{{ member.joined_at.strftime('%d %b %Y') }}</td>
+          <td><span class="badge {{ 'badge-confirmed' if member.active else 'badge-cancelled' }}">{{ 'Active' if member.active else 'Disabled' }}</span></td>
+          <td>
+            <div class="btn-group">
+              <a href="{{ url_for('manager.member_orders', member_id=member.id) }}" class="btn btn-sm btn-outline">View Orders</a>
+              <button class="btn btn-sm btn-outline" onclick="toggleMember({{ member.id }}, this)">{{ 'Disable' if member.active else 'Enable' }}</button>
+              <button class="btn btn-sm btn-outline" onclick="showResetForm({{ member.id }})">Reset Password</button>
+            </div>
+            <form id="reset-form-{{ member.id }}" method="POST" action="{{ url_for('manager.member_reset_password', member_id=member.id) }}" style="display:none; margin-top:8px;">
+              <div style="display:flex; gap:8px;">
+                <input type="password" name="password" placeholder="New password" required minlength="6">
+                <button type="submit" class="btn btn-sm btn-primary">Save</button>
+              </div>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" class="text-muted text-center">No members found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card" id="create-member-card">
+  <h2 class="mt-0" style="font-size:1.05rem;">Create New Member</h2>
+  <form method="POST" action="{{ url_for('manager.member_create') }}">
+    <div class="field-row">
+      <div class="field"><label for="member_number">Member Number</label><input type="text" id="member_number" name="member_number" placeholder="#1002" required></div>
+      <div class="field"><label for="name">Member Name</label><input type="text" id="name" name="name" required></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label for="username">Username</label><input type="text" id="username" name="username" required></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label for="password">Password</label><input type="password" id="password" name="password" required minlength="6"></div>
+      <div class="field"><label for="confirm_password">Confirm Password</label><input type="password" id="confirm_password" name="confirm_password" required minlength="6"></div>
+    </div>
+    <button type="submit" class="btn btn-accent">Create Member</button>
+  </form>
+</div>
+
+<script>
+function toggleMember(id, btn) {
+  fetch(`/manager/members/${id}/toggle`, {method: "POST"}).then(r => r.json()).then(data => {
+    if (data.ok) window.location.reload();
+  });
+}
+function showResetForm(id) {
+  const form = document.getElementById("reset-form-" + id);
+  form.style.display = form.style.display === "none" ? "block" : "none";
+}
+</script>
+{% endblock %}

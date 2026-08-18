@@ -1,0 +1,8 @@
+<a href="{{ url_for('manager.dashboard') }}" class="{{ 'active' if active_nav == 'dashboard' else '' }}">Dashboard</a>
+<a href="{{ url_for('manager.sales_history') }}" class="{{ 'active' if active_nav == 'sales_history' else '' }}">Sales History</a>
+<a href="{{ url_for('manager.reports') }}" class="{{ 'active' if active_nav == 'reports' else '' }}">Reports</a>
+<a href="{{ url_for('manager.orders') }}" class="{{ 'active' if active_nav == 'orders' else '' }}">Orders</a>
+<a href="{{ url_for('manager.members') }}" class="{{ 'active' if active_nav == 'members' else '' }}">Members</a>
+<a href="{{ url_for('manager.menu') }}" class="{{ 'active' if active_nav == 'menu' else '' }}">Menu</a>
+<a href="{{ url_for('manager.locations') }}" class="{{ 'active' if active_nav == 'locations' else '' }}">Locations</a>
+<a href="{{ url_for('staff.dashboard') }}" class="{{ 'active' if active_nav == 'staff' else '' }}">Staff Orders</a>

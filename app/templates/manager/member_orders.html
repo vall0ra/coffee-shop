@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}{{ member.name }} — Orders{% endblock %}
+{% set active_nav = 'members' %}
+{% block nav_items %}{% include 'manager/_nav.html' %}{% endblock %}
+{% block mobile_nav_items %}{% include 'manager/_mobile_nav.html' %}{% endblock %}
+
+{% block content %}
+<div class="topbar">
+  <div>
+    <div class="eyebrow">Member Orders</div>
+    <h1>{{ member.member_number }} — {{ member.name }}</h1>
+  </div>
+  <a href="{{ url_for('manager.members') }}" class="btn btn-outline">← Back to Members</a>
+</div>
+
+<div class="card">
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Order #</th><th>Date/Time</th><th>Location</th><th>Table</th><th>Payment</th><th>Status</th><th class="num">Total</th></tr></thead>
+      <tbody>
+        {% for order in orders %}
+        <tr class="clickable" onclick="window.location='{{ url_for('manager.order_detail', order_id=order.id) }}'">
+          <td class="mono">{{ order.order_number }}</td>
+          <td>{{ order.created_at.strftime('%d %b %Y, %H:%M') }}</td>
+          <td>{{ order.location.name }}</td>
+          <td>{{ order.table_number }}</td>
+          <td>{{ order.payment_method or '—' }}</td>
+          <td><span class="badge badge-{{ order.order_status|lower }}">{{ order.order_status }}</span></td>
+          <td class="num">£{{ '%.2f'|format(order.total) }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="text-muted text-center">This member has no orders yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
