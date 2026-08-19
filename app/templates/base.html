@@ -13,7 +13,7 @@
 <div class="app-shell">
   <aside class="sidebar">
     <div class="sidebar-brand">
-      <div class="mark">☕ coffee shop</div>
+      <div class="mark">TouchOne☕</div>
       {% if current_user.is_authenticated %}
         <span class="role-tag">{{ 'Manager' if current_user.role == 'manager' else 'Staff' }} · {{ current_user.name }}</span>
       {% endif %}
