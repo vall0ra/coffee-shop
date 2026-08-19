@@ -1,8 +1,3 @@
-/* ==========================================================================
-   Coffee Shop POS — Design Tokens
-   Palette: warm cream, coffee brown, dark charcoal, soft beige, muted green
-   Type: "Fraunces" (display) + "Work Sans" (body/UI) + "JetBrains Mono" (data)
-   ========================================================================== */
 
 :root {
   --cream: #f5f0e6;
@@ -59,7 +54,7 @@ a { color: inherit; text-decoration: none; }
 button { font-family: var(--font-body); cursor: pointer; }
 :focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
 
-/* ---------- App shell ---------- */
+/* ---------- App shell 
 
 .app-shell {
   display: flex;
@@ -163,7 +158,7 @@ button { font-family: var(--font-body); cursor: pointer; }
   display: none;
 }
 
-/* ---------- Cards ---------- */
+/* ---------- Cards 
 
 .card {
   background: var(--card-bg);
@@ -225,7 +220,7 @@ button { font-family: var(--font-body); cursor: pointer; }
 
 .section-title h2 { font-size: 1.2rem; }
 
-/* ---------- Buttons ---------- */
+/* ---------- Buttons
 
 .btn {
   display: inline-flex;
@@ -259,7 +254,7 @@ button { font-family: var(--font-body); cursor: pointer; }
 
 .btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
 
-/* ---------- Forms ---------- */
+/* ---------- Forms
 
 label { display: block; font-size: 0.83rem; font-weight: 600; color: var(--text-main); margin-bottom: 6px; }
 
@@ -285,7 +280,7 @@ input:focus, select:focus, textarea:focus {
 .field-row { display: flex; gap: 14px; flex-wrap: wrap; }
 .field-row .field { flex: 1; min-width: 160px; }
 
-/* ---------- Tables ---------- */
+/* ---------- Tables 
 
 .table-wrap { overflow-x: auto; }
 
@@ -317,7 +312,7 @@ table.data-table tbody tr:hover { background: var(--cream); }
 table.data-table tr.clickable { cursor: pointer; }
 .num { text-align: right; font-family: var(--font-mono); }
 
-/* ---------- Badges ---------- */
+/* ---------- Badges 
 
 .badge {
   display: inline-block;
@@ -337,7 +332,7 @@ table.data-table tr.clickable { cursor: pointer; }
 .badge-warning { background: #f2dbd8; color: var(--red); font-family: var(--font-mono); }
 .badge-muted { background: var(--beige); color: var(--text-muted); }
 
-/* ---------- Login page ---------- */
+/* ---------- Login page 
 
 .login-page {
   min-height: 100vh;
@@ -425,7 +420,7 @@ table.data-table tr.clickable { cursor: pointer; }
   line-height: 1.6;
 }
 
-/* ---------- Order wizard (staff) ---------- */
+/* ---------- Order wizard (staff)
 
 .wizard-layout {
   display: grid;
@@ -629,7 +624,7 @@ table.data-table tr.clickable { cursor: pointer; }
 .gap-8 { gap: 8px; }
 .chip-inline { display: inline-block; background: var(--beige); padding: 3px 10px; border-radius: 999px; font-size: 0.76rem; margin: 2px 4px 2px 0; }
 
-/* ---------- Responsive ---------- */
+/* ---------- Responsive 
 
 @media (max-width: 960px) {
   .wizard-layout { grid-template-columns: 1fr; }
