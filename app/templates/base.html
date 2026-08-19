@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-  <title>{% block title %}Touch One{% endblock %}</title>
+  <title>{% block title %}coffee shop{% endblock %}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Work+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
@@ -13,7 +13,7 @@
 <div class="app-shell">
   <aside class="sidebar">
     <div class="sidebar-brand">
-      <div class="mark">TouchOne☕</div>
+      <div class="mark">☕ coffee shop</div>
       {% if current_user.is_authenticated %}
         <span class="role-tag">{{ 'Manager' if current_user.role == 'manager' else 'Staff' }} · {{ current_user.name }}</span>
       {% endif %}
@@ -28,7 +28,7 @@
 
   <div style="flex:1; min-width:0; display:flex; flex-direction:column;">
     <div class="mobile-topbar">
-      <span class="mark">TouchOne☕</span>
+      <span class="mark">☕ coffee shop</span>
       <select onchange="if(this.value) window.location.href=this.value;">
         <option value="">Menu</option>
         {% block mobile_nav_items %}{% endblock %}
